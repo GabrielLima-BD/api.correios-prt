@@ -1,40 +1,62 @@
-<!-- prettier-ignore -->
-# APICorreios
+# Correios Helper — Consulta CEP & Frete
 
-Uma aplicação de exemplo (frontend estilizado + backend) para consulta de CEP (ViaCEP) e cálculo de frete com integração preparada para os Correios (CalcPrecoPrazo SOAP) — com fallback mock quando o serviço externo não estiver disponível.
+Correios Helper é um projeto completo para consulta de CEP e simulação de frete premium, com frontend moderno e backend Node.js/Express. O sistema integra a API dos Correios (CalcPrecoPrazo SOAP) e ViaCEP, oferecendo experiência visual de alto padrão, microinterações, histórico detalhado, modo escuro, loader animado, exportação de resultados e infraestrutura pronta para deploy em Azure.
 
-Principais características
-- Consulta de CEP via backend (`/api/cep/:cep`) — proxy para ViaCEP.
-- Cálculo de frete integrado com a API dos Correios (`/api/correios`) + fallback mock por serviço (PAC / SEDEX).
-- Frontend moderno com modo escuro, animações suaves, exportação CSV, seleção de serviços e destaque automático do frete mais barato.
-- Exemplos de infraestrutura (Bicep) e pipeline GitHub Actions para CI/CD.
+## O que o projeto faz?
 
-Visual rápido
-- Abra http://localhost:3000 depois de iniciar o servidor.
+- Permite consultar endereços por CEP usando ViaCEP, com resposta rápida e visual refinado.
+- Simula frete SEDEX/PAC entre dois CEPs, calculando valores, prazos e destacando automaticamente o frete mais barato.
+- Oferece histórico premium de consultas e simulações, permitindo repopular formulários com um clique.
+- Exporta resultados de frete para CSV.
+- Possui modo escuro, loader animado, ripple effect nos botões, glassmorphism, responsividade e tipografia premium.
+- Backend Node.js/Express serve as APIs, faz proxy para ViaCEP e integra com o SOAP dos Correios, usando fallback mock quando o serviço está indisponível.
+- Infraestrutura pronta para Azure (Bicep), CI/CD com GitHub Actions, e orientações de segurança.
 
-Instalação (desenvolvimento)
+## Como funciona?
 
-1. Instale dependências
+### Frontend
+- Interface premium, inspirada em prints de alto padrão.
+- Microinterações: loader customizado, ripple effect, animações de fade-in, tooltips, histórico detalhado.
+- Modo escuro/claro com alternância instantânea.
+- Formulários intuitivos para consulta de CEP e simulação de frete.
+- Botões de serviço SEDEX/PAC com seleção exclusiva ou ambos, bloqueio de cálculo sem seleção.
+- Histórico salva até 20 consultas/simulações, exibindo tipo, valor, prazo, data/hora e permitindo repopular os campos.
+- Exportação de resultados de frete para CSV.
+
+### Backend
+- API Express para `/api/cep/:cep` (proxy ViaCEP) e `/api/correios` (integração Correios SOAP).
+- Fallback mock para simulação de frete caso o serviço dos Correios esteja indisponível.
+- Preparado para receber credenciais dos Correios via variáveis de ambiente.
+- Logs verbosos com `DEBUG=1`.
+
+### Infraestrutura
+- Arquivos Bicep para deploy em Azure App Service e Storage Account.
+- Pipeline CI/CD com GitHub Actions, rodando testes e deploy automatizado.
+
+## Instalação e uso
+
+1. Instale dependências:
 
 ```bash
 npm install
 ```
 
-2. Rode em modo desenvolvimento (recarrega automaticamente)
+2. Rode em modo desenvolvimento (com recarregamento automático):
 
 ```bash
 npm run dev
 ```
 
-3. Abra o app
+3. Acesse o app:
 
 http://localhost:3000
 
-Uso
+## Endpoints
+
 - `/api/cep/:cep` — GET: exemplo `GET /api/cep/01001000` retorna JSON do ViaCEP.
 - `/api/correios` — POST: corpo JSON com campos como `cepOrigem`, `cepDestino`, `pesoKg`, `comprimentoCM`, `alturaCM`, `larguraCM`, `valorDeclarado` e `servicos` (array de códigos). O endpoint tenta consultar o SOAP dos Correios e, em caso de erro/timeout, retorna `{ fallback: true, results: [...] }` com um resultado por serviço.
 
-Exemplo de payload para `/api/correios`:
+### Exemplo de payload para `/api/correios`:
 
 ```json
 {
@@ -49,26 +71,26 @@ Exemplo de payload para `/api/correios`:
 }
 ```
 
-Variáveis de ambiente úteis
+## Variáveis de ambiente
 - `PORT` — porta do servidor (default 3000).
 - `DEBUG=1` — ativa logs verbosos.
 
-Credenciais Correios (opcional)
+## Credenciais Correios (opcional)
 - O projeto está preparado para enviar `nCdEmpresa` e `sDsSenha` ao chamar o SOAP dos Correios. Nunca comite essas credenciais.
 - Em produção, use Azure Key Vault ou variáveis de ambiente seguras para armazenar `nCdEmpresa` / `sDsSenha`.
 
-Deploy (Azure)
+## Deploy (Azure)
 - Exemplos em `infra/main.bicep` para criar App Service + Storage Account.
 - O workflow de exemplo em `.github/workflows/ci-cd.yml` demonstra pipelines de teste e deploy via Azure CLI (requer segredos configurados no repositório).
 
-CI / GitHub Actions
+## CI / GitHub Actions
 - O repositório contém um workflow que roda `npm test` e, com segredos configurados, faz deploy por Bicep + zip deploy.
 
-Contribuição
+## Contribuição
 - Issues e pull requests são bem-vindos.
 - Antes de abrir PRs, rode os testes: `npm test`.
 
-Publicar neste repositório remoto (exemplo)
+## Publicar neste repositório remoto (exemplo)
 
 ```bash
 # configure o remote (substitua pelo seu repositório)
@@ -81,9 +103,9 @@ git push -u origin main
 
 Se o push falhar por autenticação, use um Personal Access Token (PAT) ou o GitHub CLI (`gh auth login`) para autenticar.
 
-Segurança e notas finais
+## Segurança e notas finais
 - Nunca commite segredos. Use Key Vault, Azure App Configuration ou variáveis de ambiente seguras.
 - Para produção, habilite monitoramento e tente implementar retries/exponential backoff nas chamadas SOAP.
 
-Licença
+## Licença
 - MIT
