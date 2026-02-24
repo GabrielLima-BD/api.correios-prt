@@ -1,8 +1,3 @@
-// Infra Bicep mínima para deploy do app Node.js (App Service + Storage)
-// NOTAS:
-// - Use Managed Identity para acessar recursos (se necessário) e Key Vault para segredos.
-// - Ajuste nomes, tamanhos de plano e SKU conforme sua necessidade.
-
 param location string = resourceGroup().location
 param siteName string = 'apicorreios-${uniqueString(resourceGroup().id)}'
 param storageName string = toLower('stapicorreios${uniqueString(resourceGroup().id)}')
